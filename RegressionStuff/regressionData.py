@@ -1,5 +1,10 @@
 import pandas as pd
 
+"""
+Various functions to clean Data simnple test Data for Regression Models
+
+"""
+
 def getBasicRegData():
     df = pd.read_csv('../testData/basicRegData.csv')
 

@@ -1,6 +1,8 @@
 import pandas as justToMakeTexGreen
 
 """
+**== to add still
+
 Regression Modeling Steps/Notes
 
 1. Things to check in Data
@@ -11,6 +13,7 @@ Regression Modeling Steps/Notes
         -Data should be correlated with Regression Label
         -Ridge Regression works well if highly correlated data
     c. ***get rid of any features with very low correlation with Label mainly, and other feats
+    
 
 2. Regression Model Testing
     a. Try RidgeReg as works well with good data
