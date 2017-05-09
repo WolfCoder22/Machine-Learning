@@ -1,11 +1,13 @@
-from sklearn.linear_model import Lasso, Ridge, ElasticNet
+from sklearn.linear_model import Lasso, Ridge, ElasticNet, LassoLarsIC
 from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
+from RegressionOther import plot_ic_criterion
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 import pandas as pd
 
 """
@@ -57,10 +59,11 @@ def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
 
+
     #create pipeline for Model testing/training
     steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
              ('scaler', StandardScaler()),
-             ('LassoReg', Lasso())]
+             ('LassoReg', Lasso() )]
 
     pipeline = Pipeline(steps)
 
@@ -122,57 +125,35 @@ def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, 
     print("Tuned Elastic Net R squared: "+str(r2))
     print("Tuned Elastic Net MSE: "+str(mse))
 
+#Plot AIC vs BIC
+#  -function taken and changed a bit from sci-kit learn documentation
+def testFitvsNumParms(X, y):
 
+    # normalize data as done by Lars to allow for comparison
+    X /= np.sqrt(np.sum(X ** 2, axis=0))
 
-#show plot of parameter weight values from Lasso regression
-# L1 Regularization- may want to remove zero weights params for ridge regression
-def showLassoParamWeights(X, y, alpha=.4, impStrategy='mean'):
+    #LassoLarsIC: least angle regression with BIC / AIC criterion
+    model_bic = LassoLarsIC(criterion='bic')
+    t1 = time.time()
+    model_bic.fit(X, y)
+    t_bic = time.time() - t1
 
-    #get column names
-    df_columns=X.columns
+    model_aic = LassoLarsIC(criterion='aic')
+    model_aic.fit(X, y)
 
-    #fill NaNs
-    imp =Imputer(strategy=impStrategy)
-    X= imp.fit_transform(X)
+    plt.figure()
+    plot_ic_criterion(model_aic, 'AIC', 'b')
+    plot_ic_criterion(model_bic, 'BIC', 'r')
+    plt.legend()
+    plt.title('Information-criterion for model selection (training time %.3fs)'
+              % t_bic)
 
-    #create lasso and normalize
-    lasso= Lasso(normalize=True)
-
-    lasso.fit(X, y)
-
-    lasso_coef = lasso.coef_
-
-    # Plot the coefficients
-    plt.plot(range(len(df_columns)), lasso_coef)
-    plt.xticks(range(len(df_columns)), df_columns.values, rotation=60)
-    plt.margins(0.02)
     plt.show()
 
 
-def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='mean'):
 
-    # get column names
-    df_columns = X.columns
-
-    # fill NaNs
-    imp = Imputer(strategy=impStrategy)
-    Xnp = imp.fit_transform(X)
-
-    # create lasso and normalize and fit
-    lasso = Lasso(normalize=True)
-    lasso.fit(Xnp, y)
-
-    lasso_coefs = lasso.coef_
-
-    #create new X dataframe from weightThresh
-    mask= lasso_coefs>=weightThresh
-
-    return X.loc[:, mask]
-
-
-
-X, y= getEducationData()
-performElasticReg(X, y)
+X, y= getSsinData()
+testFitvsNumParms(X, y)
 
 
 """
