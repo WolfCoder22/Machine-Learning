@@ -86,7 +86,7 @@ def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
 
 
 #perform
-def performElasticReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=10):
+def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, aHigh=1, numAlphas=10):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
@@ -98,13 +98,18 @@ def performElasticReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAl
 
     pipeline = Pipeline(steps)
 
-    #create different alpha paramaters to test
-    stepsize= (aHigh-aLow)/numAlphas
-    l1_ratios = np.arange(aLow, aHigh, stepsize)
-    L1RatioParams = {'elasticnet__l1_ratio': l1_ratios}
+    #create different alpha and ratio paramaters to test
+    stepsize= 1/numRatios
+    l1_ratios = np.arange(0, 1, stepsize)
+
+    stepsize = (aHigh - aLow) / numAlphas
+    alphas = np.arange(aLow, aHigh, stepsize)
+
+    parameters = {'elasticnet__l1_ratio': l1_ratios,
+                  'elasticnet__alpha': alphas}
 
     # Create the GridSearchCV
-    gm_cv = GridSearchCV(pipeline, L1RatioParams, cv=folds)
+    gm_cv = GridSearchCV(pipeline, parameters, cv=folds)
 
     #fit the Grid Search Cross Value Model
     gm_cv.fit(X_train, y_train)
@@ -166,7 +171,7 @@ def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='me
 
 
 
-X, y= getSsinData()
+X, y= getEducationData()
 performElasticReg(X, y)
 
 
