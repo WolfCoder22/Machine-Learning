@@ -4,6 +4,9 @@ import numpy as np
 from sklearn.linear_model import SGDClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+from sklearn.metrics import roc_auc_score
 
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
@@ -68,7 +71,7 @@ def performLinearSVM(X, y, impStrategy= 'mean', preprocess=StandardScaler(), fol
     #penalty, loss, and class weights
     steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
              ('scaler', preprocess),
-             ('linearSVM', SGDClassifier(penalty= penalty, loss=loss, class_weight=class_weight ))]
+             ('linearSVM', SGDClassifier(penalty= penalty, loss=loss, class_weight=class_weight, random_state=2))]
 
     pipeline = Pipeline(steps)
 
@@ -95,35 +98,6 @@ def performLinearSVM(X, y, impStrategy= 'mean', preprocess=StandardScaler(), fol
     print("Best L1 Ratio : " + str(gm_cv.best_params_.get('linearSVM__l1_ratio')))
 
 
-def performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, nLow=1, nHigh=5, nIter=1):
-
-
-    # use hold out validation for analysis
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
-
-    # create pipeline for Model testing/training
-    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
-             ('scaler', preprocess),
-             ('knn', KNeighborsClassifier())]
-
-    pipeline = Pipeline(steps)
-
-    # compute KNN array
-    kSizes = np.arange(nLow, nHigh, nIter)
-
-    param_grid = {'knn__n_neighbors': kSizes}
-
-    # Create the GridSearchCV
-    gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
-
-    # fit the Grid Search Cross Value Model
-    gm_cv.fit(X_train, y_train)
-
-    # Compute and print metrics
-    print("Knn Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
-    print("Best Neighbor: " + str(gm_cv.best_params_.get('knn__n_neighbors')))
-
-
 """
 Kernel types
     -rbf
@@ -142,7 +116,7 @@ def performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=Stan
     #penalty, loss, and class weights
     steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
              ('scaler', preprocess),
-             ('nonLinearSVM', SVC(kernel=kernel, probability=True, class_weight=class_weight))]
+             ('nonLinearSVM', SVC(kernel=kernel, probability=True, class_weight=class_weight, random_state=2))]
 
     pipeline = Pipeline(steps)
 
@@ -170,8 +144,72 @@ def performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=Stan
     print("Best Gamma Value : " + str(gm_cv.best_params_.get('nonLinearSVM__gamma')))
 
 
+def performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, nLow=1, nHigh=5, nIter=1):
+
+
+    # use hold out validation for analysis
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+    # create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('scaler', preprocess),
+             ('knn', KNeighborsClassifier(random_state=2))]
+
+    pipeline = Pipeline(steps)
+
+    # compute KNN array
+    kSizes = np.arange(nLow, nHigh, nIter)
+
+    param_grid = {'knn__n_neighbors': kSizes}
+
+    # Create the GridSearchCV
+    gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
+
+    # fit the Grid Search Cross Value Model
+    gm_cv.fit(X_train, y_train)
+
+    # Compute and print metrics
+    print("Knn Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
+    print("Best Neighbor: " + str(gm_cv.best_params_.get('knn__n_neighbors')))
+
+
+
+def performRandomForest(X, y, folds=5,impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(), treeNumLow=10, treeNumhigh=11, treeNumLowIter=1):
+
+
+    # use hold out validation for analysis
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+    # create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('scaler', preprocess),
+             ('forest', RandomForestClassifier(class_weight=class_weight))]
+
+    pipeline = Pipeline(steps)
+
+    # compute KNN array
+    treesNum = np.arange(treeNumLow, treeNumhigh, treeNumLowIter)
+
+    param_grid = {'forest__n_estimators': treesNum}
+
+    # Create the GridSearchCV
+    gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
+
+    # fit the Grid Search Cross Value Model
+    gm_cv.fit(X_train, y_train)
+
+    # Compute and print metrics
+    print("Random Forest Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
+    print("Best tree Amount: " + str(gm_cv.best_params_.get('forest__n_estimators')))
+
+"""
+use partial fit when data set extremly big and tough to fit in memory
+
+"""
+def performNB(X, y, partialFit=False):
+
 
 
 X, y= getWineData()
 
-performKNN(X, y)
+performRandomForest(X, y)

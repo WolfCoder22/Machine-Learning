@@ -71,7 +71,7 @@ def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
     #create pipeline for Model testing/training
     steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
              ('scaler', StandardScaler()),
-             ('ridgeReg', Ridge())]
+             ('ridgeReg', Ridge(random_state=2))]
 
     pipeline = Pipeline(steps)
 
@@ -105,7 +105,7 @@ def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
     #create pipeline for Model testing/training
     steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
              ('scaler', StandardScaler()),
-             ('LassoReg', Lasso() )]
+             ('LassoReg', Lasso(random_state=2) )]
 
     pipeline = Pipeline(steps)
 
@@ -138,7 +138,7 @@ def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, 
     #create pipeline for Model testing/training
     steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
              ('scaler', StandardScaler()),
-             ('elasticnet', ElasticNet())]
+             ('elasticnet', ElasticNet(random_state=2))]
 
     pipeline = Pipeline(steps)
 
