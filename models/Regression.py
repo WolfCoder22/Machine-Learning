@@ -54,16 +54,17 @@ def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1):
 
 #show plot of parameter weight values from Lasso regression
 # L1 Regularization- may want to remove zero weights params for ridge regression
-def showLassoParamWeightVals(X, y, alpha=.4, impStrategy='mean'):
+def showLassoParamWeights(X, y, alpha=.4, impStrategy='mean'):
 
     #get column names
     df_columns=X.columns
 
-    # Pipeline for Imputing NaNs, Standardize, and Lasso Fit/Predict
-    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
-             ('lassoReg', Lasso(alpha=alpha, normalize=True))]
+    #fill NaNs
+    imp =Imputer(strategy=impStrategy)
+    X= imp.fit_transform(X)
 
-    lasso = Pipeline(steps)
+    #create lasso and normalize
+    lasso= Lasso(normalize=True)
 
     lasso.fit(X, y)
 
@@ -76,10 +77,32 @@ def showLassoParamWeightVals(X, y, alpha=.4, impStrategy='mean'):
     plt.show()
 
 
+def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='mean'):
+
+    # get column names
+    df_columns = X.columns
+
+    # fill NaNs
+    imp = Imputer(strategy=impStrategy)
+    Xnp = imp.fit_transform(X)
+
+    # create lasso and normalize and fit
+    lasso = Lasso(normalize=True)
+    lasso.fit(Xnp, y)
+
+    lasso_coefs = lasso.coef_
+
+    #create new X dataframe from weightThresh
+    mask= lasso_coefs>=weightThresh
+
+    return X.loc[:, mask]
+
+
 
 X, y= getEducationData()
 
-showLassoParamWeightVals(X, y)
+a=getNewXfromLassoWeightThresh(X, y, alpha=.1)
+print(a.info())
 
 """
 Notes of model Selection for regression
