@@ -12,13 +12,39 @@ import pandas as pd
 
 """
 File contains thre different types of Linear Models
--Lass0 (L1 Penalty), Ridge(L2 Penanlty), and ElasticNet(L2, L1 Combo)
+    -Lass0 (L1 Penalty), Ridge(L2 Penanlty), and ElasticNet(L2, L1 Combo)
+
+And a BIC/AIC criterion graphing using LassoLarsIC()
+    
 
 Methods
     
-    performRidgeReg(X, y, folds=5, impSrtat= 'mean')
-        - determines which alpha hyperparamter makes the best ridge regression and prints R^2 score
-
+    performRidgeReg(X, y, cvfolds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30)
+        - Determines which alpha hyperparamter makes the best RidgeRegression and prints R^2 score
+        -Uses Hold out validation 
+        -alphas in range alow to aHigh
+        -can change impuation strategy from mean
+        -Standardizes Data
+        
+    performLassoReg(X, y, cvfolds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30)
+        - Determines which alpha hyperparamter makes the best LassoRegression and prints R^2 score
+        -Uses Hold out validation 
+        -alphas in range alow to aHigh
+        -can change impuation strategy from mean
+        -Standardizes Data
+        
+    performElasticReg(X, y, cvfolds=5, impStrategy= 'mean', numRatios=10, aLow=0, aHigh=1, numAlphas=10)
+        -Perform ElasticRegression using a combo of L1 and L2 regualarization
+        -Uses Hold out validation
+        -alphas in range alow to aHigh
+        -Number of different ratios to produce from 0-1 in numRatios
+        -can change impuation strategy from mean
+        -Standardizes Data
+        
+    testFitvsNumParms(X, y, impStrategy= 'mean')
+        -plots a graph with AIC and BIC showing optimal number of paramters with solid line
+        -can change impuation strategy from mean
+        
 """
 
 def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30):
@@ -88,7 +114,6 @@ def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
     print("Tuned Lasso Reg MSE: "+str(mse))
 
 
-#perform
 def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, aHigh=1, numAlphas=10):
 
     #use hold out validation for analysis
@@ -127,13 +152,17 @@ def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, 
 
 #Plot AIC vs BIC
 #  -function taken and changed a bit from sci-kit learn documentation
-def testFitvsNumParms(X, y):
+def testFitvsNumParms(X, y, impStrategy='mean'):
+
+    #imputate missing values
+    imp= Imputer(missing_values='NaN', strategy=impStrategy, axis=0)
+    X= imp.fit_transform(X)
 
     # normalize data as done by Lars to allow for comparison
     X /= np.sqrt(np.sum(X ** 2, axis=0))
 
     #LassoLarsIC: least angle regression with BIC / AIC criterion
-    model_bic = LassoLarsIC(criterion='bic')
+    model_bic = LassoLarsIC(criterion='bic', normalize=True)
     t1 = time.time()
     model_bic.fit(X, y)
     t_bic = time.time() - t1
@@ -150,10 +179,6 @@ def testFitvsNumParms(X, y):
 
     plt.show()
 
-
-
-X, y= getSsinData()
-testFitvsNumParms(X, y)
 
 
 """
