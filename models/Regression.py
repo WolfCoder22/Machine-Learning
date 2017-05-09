@@ -46,17 +46,26 @@ def performRidgeReg(X, y, folds=5):
     print("Tuned Ridge Reg R squared: "+str(r2))
     print("Tuned Ridge Reg MSE: "+str(mse))
 
+def cleanBasicRegData():
+    df = pd.read_csv('../testData/basicRegData.csv')
+
+    # get x and y
+    X = df.drop('Y', 1)
+    y = df.Y
+
+    return X, y
 
 def cleanSsinData():
     df = pd.read_csv('../testData/ssin.csv', delimiter=';')
+
+    #fix y col
+    df.y=df.y.apply(lambda x: x.split(',')[0])
+    df.y= pd.to_numeric(df.y)
 
     # get x and y
     X = df.drop('y', 1)
     y = df.y
 
-    #fix y col
-    df.y=df.y.apply(lambda x: x.split(',')[0])
-    df.y= pd.to_numeric(df.y)
 
     return X, y
 
@@ -77,9 +86,9 @@ def cleanEducationData():
 
     return  X, y
 
-X, y= cleanSsinData()
+X, y= cleanBasicRegData()
 
-#performRidgeReg(X, y, )
+performRidgeReg(X, y, )
 
 """
 Notes of model Selection for regression
