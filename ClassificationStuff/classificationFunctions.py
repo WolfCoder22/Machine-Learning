@@ -205,8 +205,24 @@ def performRandomForest(X, y, folds=5,impStrategy= 'mean', class_weight=None, pr
 """
 use partial fit when data set extremly big and tough to fit in memory
 
+type Param
+    GaussianNB
+        -Features expected to be Guassian
+    MultinomialNB
+        - discrete features
+        -Ex. Count of a word in a textbody
+        -features consits of integer count of words
+    BernoulliNB
+        -discrete variables that are binary
+
+Partial Fit
+    -if extremely high amount of data
+    
+
+
+
 """
-def performNB(X, y, partialFit=False):
+def performMultiNomnNB(X, y, MultiNominal=False, partialFit=False):
 
 
 
