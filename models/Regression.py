@@ -29,7 +29,7 @@ def performRidgeReg(X, y, folds=5):
     pipeline = Pipeline(steps)
 
     #create different alpha paramaters to test
-    alphas = np.random.uniform(low=0, high=1, size=(30,))
+    alphas = np.random.uniform(low=0, high=1, size=(50,))
 
     param_grid = {'ridgeReg__alpha': alphas}
 
@@ -47,7 +47,20 @@ def performRidgeReg(X, y, folds=5):
     print("Tuned Ridge Reg MSE: "+str(mse))
 
 
-def cleanTestData():
+def cleanSsinData():
+    df = pd.read_csv('../testData/ssin.csv', delimiter=';')
+
+    # get x and y
+    X = df.drop('y', 1)
+    y = df.y
+
+    #fix y col
+    df.y=df.y.apply(lambda x: x.split(',')[0])
+    df.y= pd.to_numeric(df.y)
+
+    return X, y
+
+def cleanEducationData():
     df= pd.read_csv('../testData/educationData.csv', index_col=1)
 
     df= df.drop('deleleThis', 1)    #delete unessacry inde column
@@ -64,9 +77,9 @@ def cleanTestData():
 
     return  X, y
 
-X, y= cleanTestData()
+X, y= cleanSsinData()
 
-performRidgeReg(X, y, )
+#performRidgeReg(X, y, )
 
 """
 Notes of model Selection for regression
