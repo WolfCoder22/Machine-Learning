@@ -16,7 +16,7 @@ Methods
 
 """
 
-def performRidgeReg(X, y, impute='mean', folds=5):
+def performRidgeReg(X, y, folds=5):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
@@ -29,8 +29,9 @@ def performRidgeReg(X, y, impute='mean', folds=5):
     pipeline = Pipeline(steps)
 
     #create different alpha paramaters to test
-    alphas = np.linspace(0, 1, 30)
-    param_grid = {'alphas': alphas}
+    alphas = np.random.uniform(low=0, high=1, size=(30,))
+
+    param_grid = {'ridgeReg__alpha': alphas}
 
     # Create the GridSearchCV
     gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
@@ -41,9 +42,9 @@ def performRidgeReg(X, y, impute='mean', folds=5):
     y_pred = gm_cv.predict(X_test)
     r2 = gm_cv.score(X_test, y_test)
     mse = mean_squared_error(y_test, y_pred)
-    print("Best Alpha: {}".format(gm_cv.best_params_))
-    print("Tuned Ridge Reg R squared: {}".format(r2))
-    print("Tuned Ridge Reg MSE: {}".format(mse))
+    print("Best Alpha: "+str(gm_cv.best_params_))
+    print("Tuned Ridge Reg R squared: "+str(r2))
+    print("Tuned Ridge Reg MSE: "+str(mse))
 
 
 def cleanTestData():
@@ -53,7 +54,7 @@ def cleanTestData():
 
     #change categorical data
     df.Region= df.Region.astype('category')
-    print(df.Region.unique()) #check proper categorical
+    #print(df.Region.unique()) #check proper categorical
 
     df= pd.get_dummies(df)
 
@@ -65,8 +66,7 @@ def cleanTestData():
 
 X, y= cleanTestData()
 
-print(X.head())
-print(y.head())
+performRidgeReg(X, y, )
 
 """
 Notes of model Selection for regression
