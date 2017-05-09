@@ -1,13 +1,5 @@
-from sklearn.linear_model import Lasso, Ridge, ElasticNet
-from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.pipeline import Pipeline
-from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
-import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-
+import numpy as np
 
 
 #plots AIC vs BIC

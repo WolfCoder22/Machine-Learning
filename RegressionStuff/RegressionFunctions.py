@@ -1,13 +1,14 @@
+import time
+
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.linear_model import Lasso, Ridge, ElasticNet, LassoLarsIC
-from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
-from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
+from sklearn.preprocessing import Imputer, StandardScaler
+
 from otherFuncs import plot_ic_criterion
-import numpy as np
-import matplotlib.pyplot as plt
-import time
 
 """
 File contains: 
@@ -17,7 +18,7 @@ File contains:
 
 2. BIC/AIC criterion graphing using LassoLarsIC()
 
-3. Grahing weight values from a LassoRegression Model
+3. Graphing weight values from a LassoRegression Model
 
 4. Function to get a new Pandas DF from a Lasso weight Threshold
     
@@ -45,7 +46,8 @@ Methods
         -Number of different ratios to produce from 0-1 in numRatios
         -can change impuation strategy from mean
         -Standardizes Data
-        
+    
+    #taken, renamed, and briefly edited from sci-kit learn Documentation
     testFitvsNumParms(X, y, impStrategy= 'mean')
         -plots a graph with AIC and BIC showing optimal number of paramters with solid line
         -can change impuation strategy from mean
@@ -164,8 +166,7 @@ def performElasticReg(X, y, folds=5, impStrategy= 'mean', numRatios=10, aLow=0, 
     print("Tuned Elastic Net R squared: "+str(r2))
     print("Tuned Elastic Net MSE: "+str(mse))
 
-#Plot AIC vs BIC
-#  -function taken and changed a bit from sci-kit learn documentation
+
 def testFitvsNumParms(X, y, impStrategy='mean'):
 
     #imputate missing values
