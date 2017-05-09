@@ -19,7 +19,7 @@ Methods
 
 """
 
-def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1):
+def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
@@ -32,7 +32,8 @@ def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1):
     pipeline = Pipeline(steps)
 
     #create different alpha paramaters to test
-    alphas = np.random.uniform(low=aLow, high=aHigh, size=(50,))
+    stepsize = (aHigh - aLow) / numAlphas
+    alphas = np.arange(aLow, aHigh, stepsize)
 
     param_grid = {'ridgeReg__alpha': alphas}
 
@@ -49,6 +50,72 @@ def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1):
     print("Best Alpha: "+str(gm_cv.best_params_))
     print("Tuned Ridge Reg R squared: "+str(r2))
     print("Tuned Ridge Reg MSE: "+str(mse))
+
+
+def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30):
+
+    #use hold out validation for analysis
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+    #create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
+             ('scaler', StandardScaler()),
+             ('LassoReg', Lasso())]
+
+    pipeline = Pipeline(steps)
+
+    #create different alpha paramaters to test
+    stepsize = (aHigh - aLow) / numAlphas
+    alphas = np.arange(aLow, aHigh, stepsize)
+
+    param_grid = {'LassoReg__alpha': alphas}
+
+    # Create the GridSearchCV
+    gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
+
+    #fit the Grid Search Cross Value Model
+    gm_cv.fit(X_train, y_train)
+
+    y_pred = gm_cv.predict(X_test)
+    r2 = gm_cv.score(X_test, y_test)
+    mse = mean_squared_error(y_test, y_pred)
+
+    print("Best Alpha: "+str(gm_cv.best_params_))
+    print("Tuned Lasso Reg R squared: "+str(r2))
+    print("Tuned Lasso Reg MSE: "+str(mse))
+
+
+#perform
+def performElasticReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=10):
+
+    #use hold out validation for analysis
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
+
+    #create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
+             ('scaler', StandardScaler()),
+             ('elasticnet', ElasticNet())]
+
+    pipeline = Pipeline(steps)
+
+    #create different alpha paramaters to test
+    stepsize= (aHigh-aLow)/numAlphas
+    l1_ratios = np.arange(aLow, aHigh, stepsize)
+    L1RatioParams = {'elasticnet__l1_ratio': l1_ratios}
+
+    # Create the GridSearchCV
+    gm_cv = GridSearchCV(pipeline, L1RatioParams, cv=folds)
+
+    #fit the Grid Search Cross Value Model
+    gm_cv.fit(X_train, y_train)
+
+    y_pred = gm_cv.predict(X_test)
+    r2 = gm_cv.score(X_test, y_test)
+    mse = mean_squared_error(y_test, y_pred)
+
+    print("Best L1 Ratio: "+str(gm_cv.best_params_))
+    print("Tuned Elastic Net R squared: "+str(r2))
+    print("Tuned Elastic Net MSE: "+str(mse))
 
 
 
@@ -99,10 +166,9 @@ def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='me
 
 
 
-X, y= getEducationData()
+X, y= getSsinData()
+performElasticReg(X, y)
 
-a=getNewXfromLassoWeightThresh(X, y, alpha=.1)
-print(a.info())
 
 """
 Notes of model Selection for regression
