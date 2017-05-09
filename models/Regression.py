@@ -29,7 +29,7 @@ def performRidgeReg(X, y, folds=5):
     pipeline = Pipeline(steps)
 
     #create different alpha paramaters to test
-    alphas = np.random.uniform(low=0, high=1, size=(50,))
+    alphas = np.random.uniform(low=-1, high=1, size=(50,))
 
     param_grid = {'ridgeReg__alpha': alphas}
 
@@ -42,6 +42,7 @@ def performRidgeReg(X, y, folds=5):
     y_pred = gm_cv.predict(X_test)
     r2 = gm_cv.score(X_test, y_test)
     mse = mean_squared_error(y_test, y_pred)
+
     print("Best Alpha: "+str(gm_cv.best_params_))
     print("Tuned Ridge Reg R squared: "+str(r2))
     print("Tuned Ridge Reg MSE: "+str(mse))
