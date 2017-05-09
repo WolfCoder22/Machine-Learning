@@ -5,13 +5,14 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 
 from sklearn.metrics import roc_auc_score
 
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import Imputer, StandardScaler
+from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 
 from ClassificationStuff.classificationData import getWineData
 
@@ -174,7 +175,7 @@ def performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, 
 
 
 
-def performRandomForest(X, y, folds=5,impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(), treeNumLow=10, treeNumhigh=11, treeNumLowIter=1):
+def performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(), treeNumLow=10, treeNumhigh=11, treeNumLowIter=1):
 
 
     # use hold out validation for analysis
@@ -211,7 +212,7 @@ type Param
     MultinomialNB
         - discrete features
         -Ex. Count of a word in a textbody
-        -features consits of integer count of words
+        -features can consist of something like word count
     BernoulliNB
         -discrete variables that are binary
 
@@ -222,10 +223,50 @@ Partial Fit
 
 
 """
-def performMultiNomnNB(X, y, MultiNominal=False, partialFit=False):
+
+def performGuassianNB(X, y, partialFit=False, ):
+    addNext=2
+
+
+def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(), aLow=0, aHigh=1, numAlphas=10, fit_prior=False, class_prior=None):
+    # use hold out validation for analysis
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    #use bernulli or Multinominal Classifier based if binary data or not
+    if binaryData:
+        Nbclf= BernoulliNB(fit_prior=fit_prior, class_prior=class_prior)
+    else:
+        Nbclf= MultinomialNB(fit_prior=fit_prior, class_prior=class_prior)
+
+    # create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('scaler', preprocess),
+             ('nb', Nbclf)]
+
+    pipeline = Pipeline(steps)
+    print(pipeline.get_params().keys())
+
+    # create different alphas to test
+    stepsize = (aHigh - aLow) / numAlphas
+    alphas = np.arange(aLow, aHigh, stepsize)
+
+    param_grid = {'nb__alpha': alphas}
+
+    # Create the GridSearchCV
+    gm_cv = GridSearchCV(pipeline, param_grid, cv=folds)
+
+    # fit the Grid Search Cross Value Model
+    gm_cv.fit(X_train, y_train)
+
+    # Compute and print metrics
+    print("NB Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
+    print("Best Alpha (smoothing paramter): " + str(gm_cv.best_params_.get('nb__alpha')))
+
+
+
 
 
 
 X, y= getWineData()
 
-performRandomForest(X, y)
+performMultiNomNB(X, y)

@@ -63,7 +63,7 @@ Methods
         
 """
 
-def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30):
+def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=10):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
@@ -96,7 +96,7 @@ def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlph
     print("Tuned Ridge Reg MSE: "+str(mse))
 
 
-def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30):
+def performLassoReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=10):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
