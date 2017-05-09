@@ -3,6 +3,7 @@ from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
+from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
 import numpy as np
 import pandas as pd
 
@@ -47,47 +48,9 @@ def performRidgeReg(X, y, folds=5):
     print("Tuned Ridge Reg R squared: "+str(r2))
     print("Tuned Ridge Reg MSE: "+str(mse))
 
-def cleanBasicRegData():
-    df = pd.read_csv('../testData/basicRegData.csv')
-
-    # get x and y
-    X = df.drop('Y', 1)
-    y = df.Y
-
-    return X, y
-
-def cleanSsinData():
-    df = pd.read_csv('../testData/ssin.csv', delimiter=';')
-
-    #fix y col
-    df.y=df.y.apply(lambda x: x.split(',')[0])
-    df.y= pd.to_numeric(df.y)
-
-    # get x and y
-    X = df.drop('y', 1)
-    y = df.y
 
 
-    return X, y
-
-def cleanEducationData():
-    df= pd.read_csv('../testData/educationData.csv', index_col=1)
-
-    df= df.drop('deleleThis', 1)    #delete unessacry inde column
-
-    #change categorical data
-    df.Region= df.Region.astype('category')
-    #print(df.Region.unique()) #check proper categorical
-
-    df= pd.get_dummies(df)
-
-    #get x and y
-    X= df.drop('Y', 1)
-    y= df.Y
-
-    return  X, y
-
-X, y= cleanBasicRegData()
+X, y= getSsinData()
 
 performRidgeReg(X, y, )
 
