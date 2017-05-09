@@ -4,17 +4,22 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
-from RegressionOther import plot_ic_criterion
+from otherFuncs import plot_ic_criterion
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import pandas as pd
 
 """
-File contains thre different types of Linear Models
+File contains: 
+
+1.Three different types of Linear Models
     -Lass0 (L1 Penalty), Ridge(L2 Penanlty), and ElasticNet(L2, L1 Combo)
 
-And a BIC/AIC criterion graphing using LassoLarsIC()
+2. BIC/AIC criterion graphing using LassoLarsIC()
+
+3. Grahing weight values from a LassoRegression Model
+
+4. Function to get a new Pandas DF from a Lasso weight Threshold
     
 
 Methods
@@ -44,6 +49,15 @@ Methods
     testFitvsNumParms(X, y, impStrategy= 'mean')
         -plots a graph with AIC and BIC showing optimal number of paramters with solid line
         -can change impuation strategy from mean
+        
+    showLassoParamWeights(X, y, alpha=.4, impStrategy='mean')
+        -used to show which weights go to zero from Lasso
+        -can change alpha: should test optimal first from performLassoReg()
+        -try removing the parameters with small weights from this graph in a Ridge Regression
+    
+    getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='mean')
+        -Get new Pandas Df of X from a paramter weight Threshold in Lasso
+        - Should look at graph from showLassoParamWeights() to determine the threshold
         
 """
 
@@ -179,44 +193,45 @@ def testFitvsNumParms(X, y, impStrategy='mean'):
 
     plt.show()
 
+def showLassoParamWeights(X, y, alpha=.4, impStrategy='mean'):
+
+    #get column names
+    df_columns=X.columns
+
+    #fill NaNs
+    imp =Imputer(strategy=impStrategy)
+    X= imp.fit_transform(X)
+
+    #create lasso and normalize
+    lasso= Lasso(normalize=True)
+
+    lasso.fit(X, y)
+
+    lasso_coef = lasso.coef_
+
+    # Plot the coefficients
+    plt.plot(range(len(df_columns)), lasso_coef)
+    plt.xticks(range(len(df_columns)), df_columns.values, rotation=60)
+    plt.margins(0.02)
+    plt.show()
 
 
-"""
-Notes of model Selection for regression
+def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='mean'):
 
-Lasso (L1 abs val regualizaion)
-    - good for achieving sparsity
-    -difficult to avoid overfitting
-    -good for regression feature selection
-    
+    # get column names
+    df_columns = X.columns
 
+    # fill NaNs
+    imp = Imputer(strategy=impStrategy)
+    Xnp = imp.fit_transform(X)
 
-Ridge   (L1- square paramters)
-    -Normally better bias/variance tradeoff
-    -Good if Normal Prior distribution
-    -Good for High dimensional Data
+    # create lasso and normalize and fit
+    lasso = Lasso(normalize=True)
+    lasso.fit(Xnp, y)
 
-    -Much Better for Highly correlated features
-        do correlation plot
-        
-    -Avoids overfitting more 
-    
-    Hyperparamters
-        -Alpha
-            must be postive float
-            -Larger Values specify stronger regualriztation
-                -'underfitting'
-        
-Elastic
-    - shrinkage and automatic variable reduction
-    
-How to check
--Check feature correlation useing plot of print in DF
--Check dimesionalility of data
--Scaling doesn't make much of a difference since an affince map transformation
+    lasso_coefs = lasso.coef_
 
--Use lAsso Ridge to plot feature importance in Regression
-- Remove Features and peform ridege regression
+    #create new X dataframe from weightThresh
+    mask= lasso_coefs>=weightThresh
 
-
-"""
+    return X.loc[:, mask]
