@@ -5,6 +5,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from cleanMyTestData.regressionData import getBasicRegData, getSsinData, getEducationData
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 
 """
@@ -13,24 +14,25 @@ File contains thre different types of Linear Models
 
 Methods
     
-    performRidgeReg()
+    performRidgeReg(X, y, folds=5, impSrtat= 'mean')
+        - determines which alpha hyperparamter makes the best ridge regression and prints R^2 score
 
 """
 
-def performRidgeReg(X, y, folds=5):
+def performRidgeReg(X, y, folds=5, impStrategy= 'mean', aLow=0, aHigh=1):
 
     #use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
 
     #create pipeline for Model testing/training
-    steps = [('imputation', Imputer(missing_values='NaN', strategy='mean', axis=0)),
+    steps = [('imputation', Imputer(missing_values='NaN', strategy= impStrategy, axis=0)),
              ('scaler', StandardScaler()),
              ('ridgeReg', Ridge())]
 
     pipeline = Pipeline(steps)
 
     #create different alpha paramaters to test
-    alphas = np.random.uniform(low=-1, high=1, size=(50,))
+    alphas = np.random.uniform(low=aLow, high=aHigh, size=(50,))
 
     param_grid = {'ridgeReg__alpha': alphas}
 
@@ -50,9 +52,34 @@ def performRidgeReg(X, y, folds=5):
 
 
 
-X, y= getSsinData()
+#show plot of parameter weight values from Lasso regression
+# L1 Regularization- may want to remove zero weights params for ridge regression
+def showLassoParamWeightVals(X, y, alpha=.4, impStrategy='mean'):
 
-performRidgeReg(X, y, )
+    #get column names
+    df_columns=X.columns
+
+    # Pipeline for Imputing NaNs, Standardize, and Lasso Fit/Predict
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('lassoReg', Lasso(alpha=alpha, normalize=True))]
+
+    lasso = Pipeline(steps)
+
+    lasso.fit(X, y)
+
+    lasso_coef = lasso.coef_
+
+    # Plot the coefficients
+    plt.plot(range(len(df_columns)), lasso_coef)
+    plt.xticks(range(len(df_columns)), df_columns.values, rotation=60)
+    plt.margins(0.02)
+    plt.show()
+
+
+
+X, y= getEducationData()
+
+showLassoParamWeightVals(X, y)
 
 """
 Notes of model Selection for regression
