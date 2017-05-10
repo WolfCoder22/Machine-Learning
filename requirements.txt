@@ -1,0 +1,6 @@
+###### Requirements for my Python Machine Learning
+scipy
+numpy
+matplotlib
+pandas
+scikit-learn

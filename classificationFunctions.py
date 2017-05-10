@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 from sklearn.linear_model import SGDClassifier
@@ -15,35 +14,33 @@ from sklearn.model_selection import GridSearchCV, cross_val_score, train_test_sp
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 
-from ClassificationStuff.classificationData import getWineData
-
 
 """
 Classification Models
 
 Includes:
-    1. Guassian NB
+    1. Gaussian NB
     2. Multinominal NB
     3. Kmeans
-    3. RandomForest
-    4. LinearSVM
-    5. NonLinearSVM
+    4. RandomForest
+    5. LinearSVM
+    6. NonLinearSVM
     
 Methods:
-    performGuassianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None)
+    performGaussianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None)
         -performs a Guassian NB
         -Data should have a Normal Distribution
         -can preSet Class priors
         
     performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(),
-                      aLow=0, aHigh=1, numAlphas=3, fit_prior=False, class_prior=None)
+                      aLow=0, aHigh=1, numAlphas=5, fit_prior=False, class_prior=None)
         -performs a MultiNominal NB
         -if Binary Data set binaryData to False
         -Alpha is smoothness paramater tested in crossfold search
             - 0 means no smoothness applied
     
     performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, nLow=1, nHigh=5, nIter=1):
-        -Knn witch tests different amount of neighbor criterion per classifier
+        -Knn which tests different amount of neighbor criterion per classifier
         
     
     performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(),
@@ -78,20 +75,36 @@ Methods:
                         numCs=10, gammaLow=0, gammaHigh=1, numGammas=10, class_weight=None)
         -test different hyparamters c, and gamma through hold out validation, with grid search
             -kernel
-                -'rbf', 'sigmoid', 'ploy'
+                -'rbf', 'sigmoid', 'poly'
             -C
-                -soft margin cost
+                -soft margin param
                 -Larger C == bigger soft Margin
                 - Use K cross validation to find
             -gamma
-                -larger gamma leads to hiah bias low variance          
+                -larger gamma leads to high bias low variance          
             -class_weight
                 -set if class imbalance
                 
 """
+def performGaussianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None):
+
+
+    # create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('scaler', preprocess),
+             ('knn', GaussianNB(priors=priors))]
+
+    pipeline = Pipeline(steps)
+
+    # Get accuracy scores via Cross Validation
+    bestScore = np.mean(cross_val_score(pipeline, X, y, cv=folds))
+
+    # Compute and print metrics
+    print("Guassian NB Accuracy: {}\n".format(bestScore))
+
 
 def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(),
-                      aLow=0, aHigh=1, numAlphas=3, fit_prior=False, class_prior=None):
+                      aLow=0, aHigh=1, numAlphas=5, fit_prior=False, class_prior=None):
 
     # use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
@@ -126,23 +139,6 @@ def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', prep
     # Compute and print metrics
     print("NB Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
     print("Best Alpha (smoothing paramter): " + str(gm_cv.best_params_.get('nb__alpha')))
-
-
-def performGuassianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None):
-
-
-    # create pipeline for Model testing/training
-    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
-             ('scaler', preprocess),
-             ('knn', GaussianNB(priors=priors))]
-
-    pipeline = Pipeline(steps)
-
-    # Get accuracy scores via Cross Validation
-    bestScore = np.mean(cross_val_score(pipeline, X, y, cv=folds))
-
-    # Compute and print metrics
-    print("Guassian NB Accuracy: {}\n".format(bestScore))
 
 
 
