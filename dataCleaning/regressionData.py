@@ -34,7 +34,7 @@ def getSsinData(splitXy):
     return X, y
 
 def getEducationData(splitXy):
-    df= pd.read_csv('data/regression/basicRegData.csv', index_col=1)
+    df= pd.read_csv('data/regression/educationData.csv', index_col=1)
 
     df= df.drop('deleleThis', 1)    #delete unnecessary index column
 

@@ -13,7 +13,7 @@ Functions to Analyze Data
     - change figure size with Global Var above
     
     
-Plotting:
+Visual EDA:
         
     scatterMatrixPlot(isCategorical, dfX, dfY=None, diagonal='kde')
         -plot scatter matrix
@@ -22,19 +22,19 @@ Plotting:
             -'kde'- density plot of vars
             -'hist'- histogram of vars
     
-Expolatory Data Anlaysis:
+Statistical EDA Data Analysis:
 
-    is_outlier(points, stdThresh=3.5):
-        -checks outliers in a data set with threshold
+    getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
+        -checks outliers in a data set with threshold with MAD criterion
         -return Boolean array of indexes
         -code from StackOverflow
+        -Set remove outliers to true to remove them
+        
+    printClassImabalance(dfY)
+        -for categorical Data only
         
 """
 
-"""
-
-
-"""
 def scatterMatrixPlot(isCategorical, dfX, dfY=None, diagonal='kde'):
 
     #color data points of label if Categorical Data
@@ -46,44 +46,56 @@ def scatterMatrixPlot(isCategorical, dfX, dfY=None, diagonal='kde'):
     #maximize window and show
     plt.show()
 
-def is_outlier(points, stdThresh=3.5):
-    """
-    Returns a boolean array with True if points are outliers and False 
-    otherwise.
 
-    Parameters:
-    -----------
-        points : An numobservations by numdimensions array of observations
-        thresh : The modified z-score to use as a threshold. Observations with
-            a modified z-score (based on the median absolute deviation) greater
-            than this value will be classified as outliers.
+def getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
 
-    Returns:
-    --------
-        mask : A numobservations-length boolean array.
-
-    References:
-    ----------
-        Boris Iglewicz and David Hoaglin (1993), "Volume 16: How to Detect and
-        Handle Outliers", The ASQC Basic References in Quality Control:
-        Statistical Techniques, Edward F. Mykytka, Ph.D., Editor. 
-    """
     if len(points.shape) == 1:
-        points = points[:,None]
+        points = dfX[:,None]
     median = np.median(points, axis=0)
     diff = np.sum((points - median)**2, axis=1)
     diff = np.sqrt(diff)
     med_abs_deviation = np.median(diff)
 
     modified_z_score = 0.6745 * diff / med_abs_deviation
+    mask= modified_z_score > stdThresh
 
-    return modified_z_score > stdThresh
+    # print and return findings
+    numOutliers = np.sum(mask)
+    print("\nNum of points with Std Thresh" + str(stdThresh) + ": " + str(np.sum(mask)))
 
-dfX, dfY= getWineData(True)
+    if removeOutliers:
+
+        return points[~mask]
+
+
+def printClassImabalance(dfY):
+
+    classes= dfY.unique()
+
+    numExamples = dfY.shape
+    counts=dfY.value_counts()
+    percentages= ((counts/numExamples)* 10).round(2)
+
+    numPecentdf= counts['percent']= percentages
+
+    #print findings
+    numLables= counts.shape[0]
+
+    print("Label Counts are")
+    for index in range(0, numLables-1):
+        count= counts.iloc[index]
+        percent = percentages.iloc[index]
+
+        print("Label "+str(classes[index])+": count= "+str(count)+", "+str(percent)+"% of data")
+
+
+
+
+dfX, dfY= getEducationData(True)
 #scatterMatrixPlot(False, dfX.iloc[:, [1, 2, 3, 4 ,5, 6]], dfY)
 
-print(is_outlier(dfX))
-
+#print(df.head())
+printClassImabalance(dfY)
 
 
 
