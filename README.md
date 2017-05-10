@@ -7,4 +7,7 @@
 #### Notes on Different Models, testing/Traing Steps to Consider, in
 	- notes directory
 
+#### CSVs from ../data turned Pandas Df ready for ML in
+	- dataCleaning directory
+
 
