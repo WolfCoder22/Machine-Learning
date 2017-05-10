@@ -10,7 +10,8 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.metrics import roc_auc_score
 
 from sklearn.metrics import classification_report, accuracy_score
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV, cross_val_score, train_test_split
+
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Imputer, StandardScaler, MaxAbsScaler
 
@@ -18,8 +19,71 @@ from ClassificationStuff.classificationData import getWineData
 
 
 """
-Various Classification Problems
+Classification Models
 
+Includes:
+    1. Guassian NB
+    2. Multinominal NB
+    3. Kmeans
+    3. RandomForest
+    4. LinearSVM
+    5. NonLinearSVM
+    
+Methods:
+    performGuassianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None)
+        -performs a Guassian NB
+        -Data should have a Normal Distribution
+        -can preSet Class priors
+        
+    performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(),
+                      aLow=0, aHigh=1, numAlphas=3, fit_prior=False, class_prior=None)
+        -performs a MultiNominal NB
+        -if Data Binary set binaryData to False
+        -Alpha is smoothness parmater tested in crossfold search
+            - 0 means no smoothness applied
+    
+    performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, nLow=1, nHigh=5, nIter=1):
+        -Knn witch tests different amount of neighbor criterion per classifier
+        
+    
+    performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(),
+                        treeNumLow=10, treeNumhigh=11, treeNumLowIter=1)
+        - Tests different amount of trees per classifier
+    
+    performLinearSVM(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, penalty='l2', loss='hinge,
+     aLow = 0.0001, aHigh=.1, numAlphas=10, class_weight=None, l1RatLow=0, l1RatHigh=.5, numL1Ratios=10)
+        -penlatly 'l2', 'l1', or 'elasticnet'
+            -l2 and net lead to sparse data
+            -Use when LOOK INTO MORE
+        loss
+            - 'hinge'- deafult
+            - 'log'- logisitic regression
+            - ‘modified_huber'- good if outliers
+            - ‘squared_hinge’- quadratcillay penalized 
+            
+        class_weight
+            -set if class imbalance
+        
+        L1Ration
+            - 0 to 1
+            -percent of L1 versus l2 in model
+                -high l1 means nonImportant features in Data
+        
+        Alpha
+            -regualarization term
+         
+     
+     performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=StandardScaler(), folds=5, cLow=.000001, cHigh=1,
+                        numCs=10,gammaLow=0, gammaHigh=1, numGammas=10, class_weight=None)
+        
+        - 
+    
+    
+    
+    
+                      
+    
+    
 """
 
 
@@ -106,8 +170,8 @@ Kernel types
 
 """
 
-def performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=StandardScaler(), folds=5, loss='hinge', cLow=.000001, cHigh=1, numCs=10,
-                        gammaLow=0, gammaHigh=1, numGammas=10, class_weight=None):
+def performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=StandardScaler(), folds=5, cLow=.000001, cHigh=1,
+                        numCs=10,gammaLow=0, gammaHigh=1, numGammas=10, class_weight=None):
 
 
     # use hold out validation for analysis
@@ -175,7 +239,8 @@ def performKNN(X, y, impStrategy= 'mean', preprocess=StandardScaler(), folds=5, 
 
 
 
-def performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(), treeNumLow=10, treeNumhigh=11, treeNumLowIter=1):
+def performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, preprocess=StandardScaler(),
+                        treeNumLow=10, treeNumhigh=11, treeNumLowIter=1):
 
 
     # use hold out validation for analysis
@@ -203,32 +268,27 @@ def performRandomForest(X, y, folds=5, impStrategy= 'mean', class_weight=None, p
     print("Random Forest Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
     print("Best tree Amount: " + str(gm_cv.best_params_.get('forest__n_estimators')))
 
-"""
-use partial fit when data set extremly big and tough to fit in memory
 
-type Param
-    GaussianNB
-        -Features expected to be Guassian
-    MultinomialNB
-        - discrete features
-        -Ex. Count of a word in a textbody
-        -features can consist of something like word count
-    BernoulliNB
-        -discrete variables that are binary
-
-Partial Fit
-    -if extremely high amount of data
-    
+def performGuassianNB(X, y, folds=10, impStrategy= 'mean', preprocess=MaxAbsScaler(), priors=None):
 
 
+    # create pipeline for Model testing/training
+    steps = [('imputation', Imputer(missing_values='NaN', strategy=impStrategy, axis=0)),
+             ('scaler', preprocess),
+             ('knn', GaussianNB(priors=priors))]
 
-"""
+    pipeline = Pipeline(steps)
 
-def performGuassianNB(X, y, partialFit=False, ):
-    addNext=2
+    # Get accuracy scores via Cross Validation
+    bestScore = np.mean(cross_val_score(pipeline, X, y, cv=folds))
+
+    # Compute and print metrics
+    print("Guassian NB Accuracy: {}\n".format(bestScore))
 
 
-def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(), aLow=0, aHigh=1, numAlphas=10, fit_prior=False, class_prior=None):
+def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', preprocess=MaxAbsScaler(),
+                      aLow=0, aHigh=1, numAlphas=3, fit_prior=False, class_prior=None):
+
     # use hold out validation for analysis
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
@@ -269,4 +329,4 @@ def performMultiNomNB(X, y, binaryData=False, folds=5, impStrategy= 'mean', prep
 
 X, y= getWineData()
 
-performMultiNomNB(X, y)
+performNoNLinearSVM(X, y)
