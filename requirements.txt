@@ -1,4 +1,3 @@
-###### Requirements for my Python Machine Learning
 scipy
 numpy
 matplotlib
