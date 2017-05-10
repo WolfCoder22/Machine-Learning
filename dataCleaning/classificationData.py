@@ -1,11 +1,12 @@
 import pandas as pd
 
-def getWineData():
-    df = pd.read_csv('../../testData/wineData.csv')
+def getWineData(splitXy):
+    df = pd.read_csv('data/classification/wineData.csv', index_col=0)
 
-    # get x and y
-    X = df.drop('Class', 1)
-    y = df.Class
+    if splitXy:
+        X = df.drop('Class', 1)
+        y = df.Class
+        return X, y
 
-
-    return X, y
+    else:
+        return df
