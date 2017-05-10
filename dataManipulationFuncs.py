@@ -9,3 +9,8 @@ from dataCleaning.regressionData import getSsinData, getEducationData, getBasicR
 Functions to perform Data Manipulation
 
 """
+
+def oneHotEncoding(df):
+
+    df= pd.get_dummies(df)
+    return df
