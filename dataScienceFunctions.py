@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm as cm
 
 from dataCleaning.classificationData import getWineData
 from dataCleaning.regressionData import getSsinData, getEducationData, getBasicRegData
@@ -68,6 +69,26 @@ def getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
         return points[~mask]
 
 
+def correlation_matrix(df):
+
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    cmap = cm.get_cmap('jet', 30)
+    cax = ax1.imshow(df.corr(), interpolation="nearest", cmap=cmap)
+    ax1.grid(True)
+
+    plt.title('Abalone Feature Correlation')
+    labels=['Sex','Length','Diam','Height','Whole','Shucked','Viscera','Shell','Rings',]
+
+    ax1.set_xticklabels(labels,fontsize=6)
+    ax1.set_yticklabels(labels,fontsize=6)
+
+    # Add colorbar, make sure to specify tick locations to match desired ticklabels
+    fig.colorbar(cax, ticks=[.75,.8,.85,.90,.95,1])
+    plt.show()
+
+
+
 def printClassImabalance(dfY):
 
     classes= dfY.unique()
@@ -91,11 +112,13 @@ def printClassImabalance(dfY):
 
 
 
+
+
 dfX, dfY= getEducationData(True)
 #scatterMatrixPlot(False, dfX.iloc[:, [1, 2, 3, 4 ,5, 6]], dfY)
 
 #print(df.head())
-printClassImabalance(dfY)
+correlation_matrix(dfX)
 
 
 
