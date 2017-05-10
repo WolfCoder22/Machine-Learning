@@ -23,16 +23,23 @@ Visual EDA:
             -'kde'- density plot of vars
             -'hist'- histogram of vars
     
+    correlation_matrix(dfx)
+        -plot correlation matrix
+    
 Statistical EDA Data Analysis:
 
-    getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
+    outliers(points, stdThresh=3.5, removeOutliers=False):
         -checks outliers in a data set with threshold with MAD criterion
         -return Boolean array of indexes
         -code from StackOverflow
         -Set remove outliers to true to remove them
         
-    printClassImabalance(dfY)
+    printClassImbalance(dfY)
         -for categorical Data only
+        
+    skewness(dfX, removeBadSkew=False, absGoodSkewThresh=2)
+        -prints skewness of each collumn
+        -set removeBadSkew to remove collumns with skewness above or below the absGoodSkewThresh
         
 """
 
@@ -48,7 +55,8 @@ def scatterMatrixPlot(isCategorical, dfX, dfY=None, diagonal='kde'):
     plt.show()
 
 
-def getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
+
+def outliers(points, stdThresh=3.5, removeOutliers=False):
 
     if len(points.shape) == 1:
         points = dfX[:,None]
@@ -69,12 +77,13 @@ def getOutlierIndexBool(points, stdThresh=3.5, removeOutliers=False):
         return points[~mask]
 
 
-def correlation_matrix(df):
+
+def correlation_matrix(dfX):
 
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     cmap = cm.get_cmap('jet', 30)
-    cax = ax1.imshow(df.corr(), interpolation="nearest", cmap=cmap)
+    cax = ax1.imshow(dfX.corr(), interpolation="nearest", cmap=cmap)
     ax1.grid(True)
 
     plt.title('Abalone Feature Correlation')
@@ -89,15 +98,13 @@ def correlation_matrix(df):
 
 
 
-def printClassImabalance(dfY):
+def printClassImbalance(dfY):
 
     classes= dfY.unique()
 
     numExamples = dfY.shape
     counts=dfY.value_counts()
     percentages= ((counts/numExamples)* 10).round(2)
-
-    numPecentdf= counts['percent']= percentages
 
     #print findings
     numLables= counts.shape[0]
@@ -110,15 +117,27 @@ def printClassImabalance(dfY):
         print("Label "+str(classes[index])+": count= "+str(count)+", "+str(percent)+"% of data")
 
 
+def skewness(dfX, removeBadSkew=False, absGoodSkewThresh=2):
+    skew=dfX.skew(axis=0)
+
+    # return new df removing collumns out of renage of good skewThesh
+    if removeBadSkew:
+        rows,_= dfX.shape
+        criteria=skew.abs() > absGoodSkewThresh
+
+        goodSkewDf = dfX[criteria.index[criteria]]
 
 
+        return goodSkewDf
+
+    # print skewness to show
+    else:
+        print(skew)
 
 
 dfX, dfY= getEducationData(True)
-#scatterMatrixPlot(False, dfX.iloc[:, [1, 2, 3, 4 ,5, 6]], dfY)
 
-#print(df.head())
-correlation_matrix(dfX)
+skewness(dfX, removeBadSkew=True).info()
 
 
 
