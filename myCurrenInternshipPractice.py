@@ -10,7 +10,7 @@ PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
 
 Steps Taken for Practice
     1. Clean Individual CVS Seperated by Type of Feature
-    
+    2. Will do rest later
     
 """
 

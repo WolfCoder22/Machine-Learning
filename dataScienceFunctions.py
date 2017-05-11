@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm as cm
 
-from dataCleaning.classificationData import getWineData
-from dataCleaning.regressionData import getSsinData, getEducationData, getBasicRegData
-
 global figSize
 figsize=[8, 8]
 
@@ -59,7 +56,7 @@ def scatterMatrixPlot(isCategorical, dfX, dfY=None, diagonal='kde'):
 def outliers(points, stdThresh=3.5, removeOutliers=False):
 
     if len(points.shape) == 1:
-        points = dfX[:,None]
+        points = points[:,None]
     median = np.median(points, axis=0)
     diff = np.sum((points - median)**2, axis=1)
     diff = np.sqrt(diff)
@@ -133,11 +130,6 @@ def skewness(dfX, removeBadSkew=False, absGoodSkewThresh=2):
     # print skewness to show
     else:
         print(skew)
-
-
-dfX, dfY= getEducationData(True)
-
-skewness(dfX, removeBadSkew=True).info()
 
 
 

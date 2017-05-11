@@ -8,8 +8,6 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Imputer, StandardScaler
 
-from otherFuncs import plot_ic_criterion
-
 """
 File contains: 
 
@@ -236,3 +234,16 @@ def getNewXfromLassoWeightThresh(X, y, alpha=.4, weightThresh=1, impStrategy='me
     mask= lasso_coefs>=weightThresh
 
     return X.loc[:, mask]
+
+#plots AIC vs BIC
+#   -taken from Sci-kit learn API
+def plot_ic_criterion(model, name, color):
+    alpha_ = model.alpha_
+    alphas_ = model.alphas_
+    criterion_ = model.criterion_
+    plt.plot(-np.log10(alphas_), criterion_, '--', color=color,
+             linewidth=3, label='%s criterion' % name)
+    plt.axvline(-np.log10(alpha_), color=color, linewidth=3,
+                label='alpha: %s estimate' % name)
+    plt.xlabel('-log(alpha)')
+    plt.ylabel('criterion')
