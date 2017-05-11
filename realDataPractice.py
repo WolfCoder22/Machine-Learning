@@ -1,5 +1,4 @@
 import pandas as pd
-
 from numpy import NaN
 
 #my functions
