@@ -35,20 +35,36 @@ def concatDFHorizantaly(dfList):
     dfList.pop(0)
     print("\n testing shape concat")
     for df in dfList:
-        print(fullDf.shape)
-        print(df.shape)
-
-        #fill NaN indexes
-        pd.
+        # print(fullDf.shape)
+        # print(df.shape)
+        fixMissingIndexVals(df)
 
         # fullDf= df.drop_duplicates(inplace=True)
         # df.drop_duplicates(inplace=True)
-        fullDf = pd.concat([fullDf, df], axis=1, ignore_index=True)
+        fullDf = pd.concat([fullDf, df], axis=1, ignore_index=False)
 
 
     return fullDf
 
-def fixMissingIndexVals()
+def fixMissingIndexVals(df):
+    indexVals= df.index.values
+    NaNBool=pd.isnull(indexVals)
+    NaNcount=np.sum(pd.isnull(indexVals))
+
+    #make new index names
+    indexNamesForNaN=[]
+    prefix= "UNAMED COMPANY "
+    for i in range(0, NaNcount):
+        newName= prefix+str(i+1)
+        indexNamesForNaN.append(newName)
+
+    #fix unamed indexes
+    df[NaNBool]= df[NaNBool].set_index(indexNamesForNaN)
+    print("####mising values filled")
+    fixMissingIndexVals(df)
+
+
+
 
 
 def enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, iterator=1):
