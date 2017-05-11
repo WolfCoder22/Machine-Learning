@@ -40,19 +40,25 @@ def cleanTXdemo2015():
     df3= pd.melt(df2, id_vars=['DISTRICT', 'DPETALLC', 'YEAR'], value_vars=['ASIAN', 'AMERICAN INDIAN OR ALASKA NAT', 'NATIVE HAWAIIAN/OTHER PACIFIC'
                                                          'WHITE','BLACK OR AFRICAN AMERICAN','HISPANIC/LATINO'], var_name="HEADING NAME", value_name="NUMPPL")
 
-    #print(df1.head())
-    print("\n")
+    # print(df1.head())
+    # print("\n")
     # print(df3.head())
 
     df4= pd.merge(left=df3, right= df1, how='outer')
 
     df5= df4[['HEADING NAME', 'NUMPPL', 'YEAR']]
 
-    df5sum= df4.sum()
-    #print(df5sum.head())
+    # df5sum= df4.sum()
+    # print(df5sum.head())
 
-    q2Answer= df5sum['NUMPPL']/ df5sum['DPETALLC']
-    print(q2Answer)
+    #q2Answer= df5sum['NUMPPL']/ df5sum['DPETALLC']
+    #print(q2Answer)
+
+    df6=(df4[df4['HEADING NAME']!='TWO OR MORE RACES'])
+    sumDP= df4['DPETALLC'].sum()
+    totalPPL= sumDP= df4['NUMPPL'].sum()
+    print(df4.head())
+
 
 
 
