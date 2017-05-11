@@ -3,13 +3,15 @@ import pandas as pd
 from numpy import NaN
 
 #my functions
-from dataManipulationFuncs import oneHotEncoding
+from dataManipulationFuncs import oneHotEncoding, changeDiscreteFeatures
 
 """
 PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
 
 Steps Taken for Practice
     1. Clean Individual CVS Seperated by Type of Feature
+    
+    
 """
 
 
@@ -91,6 +93,9 @@ def cleanFormD():
     print("\n")
     print(df.info())
 
+    df= changeDiscreteFeatures(df['60 months Form D #'], 'Form D Amount raised (6 months)', numHigh=100)
+    print("\n")
+    df.info()
     return df
 
 
