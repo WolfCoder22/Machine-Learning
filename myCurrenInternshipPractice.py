@@ -55,24 +55,25 @@ def cleanWebDomainFeat():
     df = pd.read_csv('data/myCurrInternshipData/webDomainFeat.csv', index_col=0)
 
     print(df.WebsiteTLD.value_counts(dropna=False))
-    #
-    # # found MI String in Data, so making Null
-    # df[df.TwoDigitNAICS == 'MI'] = NaN
-    #
-    # print(df.TwoDigitNAICS.value_counts(dropna=False))
-    #
-    # # Turn to Categorical
-    # df.TwoDigitNAICS = df.TwoDigitNAICS.astype('category')
+
+    # found NONE String in Index, so adding it to NaN count and removing
+    df[df.WebsiteTLD == 'NONE'] = NaN
+
+    print(df.WebsiteTLD.value_counts(dropna=False))
+
+    #fix com and COM
+    df[df.WebsiteTLD == 'com'] = 'COM'
+    print(df.WebsiteTLD.value_counts(dropna=False))
+
+    # Turn to Categorical
+    df.TwoDigitNAICS = df.WebsiteTLD.astype('category')
+    print('\n')
+    df.info()
+
+    # Do one Hot encoding Later
+
+    # df= oneHotEncoding(df)
     # print('\n')
-    # df.info()
-    #
-    # # check Number of Categories
-    # print(df.TwoDigitNAICS.unique)
-    #
-    # # Do one Hot encoding Later
-    #
-    # # df= oneHotEncoding(df)
-    # # print('\n')
-    # # print(df.head())
+    # print(df.head())
 
 cleanWebDomainFeat()
