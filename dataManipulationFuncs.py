@@ -8,6 +8,14 @@ from dataCleaning.regressionData import getSsinData, getEducationData, getBasicR
 """
 Functions to perform Data Manipulation
 
+Methods:
+    oneHotEncoding(df)
+        -performs one hot encoding on a Pandas df/series
+        -changes collumns with dtype categorical
+
+    enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, iterator=1)
+        -does a one hot encoding for discrete Data with unfilled Data
+
 """
 
 def oneHotEncoding(df):
@@ -16,7 +24,7 @@ def oneHotEncoding(df):
     return df
 
 
-def binaryDiscreteInt(dfFull, df, colName, numHigh, numLow=0, iterator=1):
+def enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, iterator=1):
 
     #make sure are integer values
     isInt= (df.dtypes == 'int64')

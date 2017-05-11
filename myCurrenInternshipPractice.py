@@ -3,7 +3,7 @@ import pandas as pd
 from numpy import NaN
 
 #my functions
-from dataManipulationFuncs import oneHotEncoding, binaryDiscreteInt
+from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns
 
 """
 PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
@@ -95,7 +95,7 @@ def cleanFormD():
 
     ### This wasn't 100% needed but may help
     # discreteColName= '60 months Form D #'
-    # df= binaryDiscreteInt(df, df[discreteColName], discreteColName, numHigh=100)
+    # df= enocodeDiscreteDatWithinUnKnowns(df, df[discreteColName], discreteColName, numHigh=100)
     # print("\n")
     # df.info()
     return df
