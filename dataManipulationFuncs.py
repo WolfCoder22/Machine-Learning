@@ -23,6 +23,11 @@ def oneHotEncoding(df):
     df= pd.get_dummies(df)
     return df
 
+def imputeValues(df):
+
+    df[any
+    return df
+
 
 def concatDFHorizantaly(dfList):
 
@@ -30,7 +35,8 @@ def concatDFHorizantaly(dfList):
     fullDf= dfList[0]
     dfList.pop(0)
     for df in dfList:
-        fullDf = pd.concat([fullDf, df], axis=1)
+        fullDf = pd.concat([fullDf, df], axis=1, join='inner', ignore_index=True)
+
 
     return fullDf
 

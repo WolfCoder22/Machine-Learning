@@ -2,7 +2,7 @@ import pandas as pd
 from numpy import NaN
 
 #my functions
-from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns, concatDFHorizantaly
+from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns, concatDFHorizantaly, imputeValues
 
 """
 PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
@@ -21,12 +21,12 @@ Steps Taken for Practice
 
 def cleanNAICSdata():
     df= pd.read_csv('data/myCurrInternshipData/NAICSfeats.csv', index_col=0)
-    df.info()
-    print(df.shape)
-    print(df.head())
+    #df.info()
+    #print(df.shape)
+    #print(df.head())
 
-    print('\n')
-    print(df.TwoDigitNAICS.value_counts(dropna=False))
+    #print('\n')
+    #print(df.TwoDigitNAICS.value_counts(dropna=False))
 
     #found MI String in Data, so making Null
     df[df.TwoDigitNAICS=='MI']= NaN
@@ -35,14 +35,14 @@ def cleanNAICSdata():
 
     #Turn to Categorical
     df.TwoDigitNAICS= df.TwoDigitNAICS.astype('category')
-    print('\n')
-    df.info()
+    #print('\n')
+    #df.info()
 
     #check Number of Categories
-    print(df.TwoDigitNAICS.unique)
+    #print(df.TwoDigitNAICS.unique)
 
     #make sure data type uniform
-    print(df.TwoDigitNAICS.unique())
+    #print(df.TwoDigitNAICS.unique())
 
     #Do one Hot encoding Later
 
@@ -102,14 +102,19 @@ def cleanFormD():
     return df
 
 def cleanRest():
-    return  pd.read_csv('data/myCurrInternshipData/allFeatsNoCategorical.csv', index_col=0)
+    df=  pd.read_csv('data/myCurrInternshipData/allFeatsNoCategorical.csv', index_col=0)
+    return imputeValues(df)
 
 def concateAllData():
     dfList=[]
     df1= cleanRest()
+    print(df1.shape)
     df2= cleanNAICSdata()
+    print(df2.shape)
     df3 = cleanWebDomainFeat()
+    print(df3.shape)
     df4= cleanSqFtdata()
+    print(df4.shape)
 
     dfList.append(df1)
     dfList.append(df2)
@@ -120,6 +125,6 @@ def concateAllData():
     return concatDFHorizantaly(dfList)
 
 
-df=concateAllData()
+df=cleanRest()
 df.info()
 
