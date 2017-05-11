@@ -277,3 +277,5 @@ def performNoNLinearSVM(X, y, kernel='rbf', impStrategy= 'mean', preprocess=Stan
     print("NonLinear SVM Accuracy: {}\n".format(gm_cv.score(X_test, y_test)))
     print("Best C (Penalty Of Error term): " + str(gm_cv.best_params_.get('nonLinearSVM__C')))
     print("Best Gamma Value : " + str(gm_cv.best_params_.get('nonLinearSVM__gamma')))
+
+performNoNLinearSVM()

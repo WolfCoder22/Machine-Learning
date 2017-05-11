@@ -99,6 +99,11 @@ def cleanFormD():
     # df.info()
     return df
 
+def cleanRest():
+    return  pd.read_csv('data/myCurrInternshipData/allFeatsNoCategorical.csv', index_col=0)
 
-cleanFormD()
+def concateAllData():
+    df
+
+cleanRest()
 

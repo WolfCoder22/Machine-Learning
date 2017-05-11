@@ -10,3 +10,10 @@ def getWineData(splitXy):
 
     else:
         return df
+
+def getWineData():
+    df = pd.read_csv('data/myCurrInternshipData', index_col=0)
+
+    X = df.drop('Class', 1)
+    y = df.Class
+    return X, y

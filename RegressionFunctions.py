@@ -21,7 +21,7 @@ File contains:
 4. Function to get a new Pandas DF from a Lasso weight Threshold
     
 
-Methods
+Regression Functions:
     
     performRidgeReg(X, y, cvfolds=5, impStrategy= 'mean', aLow=0, aHigh=1, numAlphas=30)
         - Determines which alpha hyperparamter makes the best RidgeRegression and prints R^2 score
@@ -44,6 +44,8 @@ Methods
         -Number of different ratios to produce from 0-1 in numRatios
         -can change impuation strategy from mean
         -Standardizes Data
+
+Model Improve/ Visualiztion Functions:
     
     #taken, renamed, and briefly edited from sci-kit learn Documentation
     testFitvsNumParms(X, y, impStrategy= 'mean')

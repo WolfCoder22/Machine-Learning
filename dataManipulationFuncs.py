@@ -24,6 +24,17 @@ def oneHotEncoding(df):
     return df
 
 
+def concatDFHorizantaly(dfList):
+
+    #concate all horizantally
+    fullDf= dfList[0]
+    dfList.pop(dfList[0])
+    for df in dfList:
+        df = pd.concat([fullDf, df], axis=1)
+
+    return fullDf
+
+
 def enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, iterator=1):
 
     #make sure are integer values
@@ -50,6 +61,8 @@ def enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, ite
     dfFull = dfFull.drop(colName, 1)
 
     return dfFull
+
+
 
 
 
