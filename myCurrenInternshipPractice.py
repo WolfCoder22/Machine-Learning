@@ -3,7 +3,7 @@ import pandas as pd
 from numpy import NaN
 
 #my functions
-from dataManipulationFuncs import oneHotEncoding, changeDiscreteFeatures
+from dataManipulationFuncs import oneHotEncoding, binaryDiscreteInt
 
 """
 PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
@@ -93,9 +93,11 @@ def cleanFormD():
     print("\n")
     print(df.info())
 
-    df= changeDiscreteFeatures(df['60 months Form D #'], 'Form D Amount raised (6 months)', numHigh=100)
-    print("\n")
-    df.info()
+    ### This wasn't 100% needed but may help
+    # discreteColName= '60 months Form D #'
+    # df= binaryDiscreteInt(df, df[discreteColName], discreteColName, numHigh=100)
+    # print("\n")
+    # df.info()
     return df
 
 
