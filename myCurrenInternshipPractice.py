@@ -40,6 +40,9 @@ def cleanNAICSdata():
     #check Number of Categories
     print(df.TwoDigitNAICS.unique)
 
+    #make sure data type uniform
+    print(df.TwoDigitNAICS.unique())
+
     #Do one Hot encoding Later
 
     # df= oneHotEncoding(df)
@@ -76,4 +79,20 @@ def cleanWebDomainFeat():
     # print('\n')
     # print(df.head())
 
-cleanWebDomainFeat()
+def cleanFormD():
+
+    #purposely broke up and joined
+    df1 = pd.read_csv('data/myCurrInternshipData/formDfeats1.csv', index_col=0)
+    df2 = pd.read_csv('data/myCurrInternshipData/formDfeats2.csv', index_col=0)
+
+    df= pd.concat([df1, df2], axis=0)
+
+    print(df.head())
+    print("\n")
+    print(df.info())
+
+    return df
+
+
+cleanFormD()
+
