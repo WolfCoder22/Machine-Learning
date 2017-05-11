@@ -55,9 +55,13 @@ def cleanTXdemo2015():
     #print(q2Answer)
 
     df6=(df4[df4['HEADING NAME']!='TWO OR MORE RACES'])
-    sumDP= df4['DPETALLC'].sum()
+    df7= df4.drop_duplicates(subset=['DISTRICT'])
+    totalPunishments=(df7['DPETALLC']).sum()
     totalPPL= sumDP= df4['NUMPPL'].sum()
-    print(df4.head())
+
+
+    q3answer= totalPunishments/totalPPL
+    print(q3answer)
 
 
 
