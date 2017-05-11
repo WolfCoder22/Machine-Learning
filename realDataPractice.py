@@ -50,7 +50,7 @@ def cleanNAICSdata():
     # print('\n')
     # print(df.head())
 
-    return df
+    return imputeValues(df)
 
 def cleanSqFtdata():
     return pd.read_csv('data/myCurrInternshipData/squareFootageFeat.csv', index_col=0)
@@ -80,7 +80,7 @@ def cleanWebDomainFeat():
     # print('\n')
     # print(df.head())
 
-    return df
+    return imputeValues(df)
 
 def cleanFormD():
 
@@ -99,7 +99,7 @@ def cleanFormD():
     # df= enocodeDiscreteDatWithinUnKnowns(df, df[discreteColName], discreteColName, numHigh=100)
     # print("\n")
     # df.info()
-    return df
+    return imputeValues(df)
 
 def cleanRest():
     df=  pd.read_csv('data/myCurrInternshipData/allFeatsNoCategorical.csv', index_col=0)
@@ -125,6 +125,6 @@ def concateAllData():
     return concatDFHorizantaly(dfList)
 
 
-df=cleanRest()
+df=concateAllData()
 df.info()
 

@@ -24,8 +24,7 @@ def oneHotEncoding(df):
     return df
 
 def imputeValues(df):
-
-    df[any
+    df=df.fillna(df.mean())
     return df
 
 
@@ -34,11 +33,22 @@ def concatDFHorizantaly(dfList):
     #concate all horizantally
     fullDf= dfList[0]
     dfList.pop(0)
+    print("\n testing shape concat")
     for df in dfList:
-        fullDf = pd.concat([fullDf, df], axis=1, join='inner', ignore_index=True)
+        print(fullDf.shape)
+        print(df.shape)
+
+        #fill NaN indexes
+        pd.
+
+        # fullDf= df.drop_duplicates(inplace=True)
+        # df.drop_duplicates(inplace=True)
+        fullDf = pd.concat([fullDf, df], axis=1, ignore_index=True)
 
 
     return fullDf
+
+def fixMissingIndexVals()
 
 
 def enocodeDiscreteDatWithinUnKnowns(dfFull, df, colName, numHigh, numLow=0, iterator=1):
