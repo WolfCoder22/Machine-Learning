@@ -16,7 +16,7 @@ from regressionFunctions import testFitvsNumParms, showLassoParamWeights, getNew
 from EDAFuncs import scatterMatrixPlot, correlation_matrix
 from EDAFuncs import outliers, printClassImbalance, skewness
 
-from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns
+from dataManipulationFuncs import oneHotEncoding, concatDFHorizantaly, enocodeDiscreteDatWithinUnKnowns
 
 
 

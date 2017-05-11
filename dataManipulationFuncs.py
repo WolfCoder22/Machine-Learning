@@ -28,9 +28,9 @@ def concatDFHorizantaly(dfList):
 
     #concate all horizantally
     fullDf= dfList[0]
-    dfList.pop(dfList[0])
+    dfList.pop(0)
     for df in dfList:
-        df = pd.concat([fullDf, df], axis=1)
+        fullDf = pd.concat([fullDf, df], axis=1)
 
     return fullDf
 

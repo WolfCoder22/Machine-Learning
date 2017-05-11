@@ -2,7 +2,7 @@ import pandas as pd
 from numpy import NaN
 
 #my functions
-from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns
+from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns, concatDFHorizantaly
 
 """
 PRATICING ON MY CURRENT INTERNSHIP WITH NEW KNOWLEDGE LEARN THIS WEEK
@@ -31,7 +31,7 @@ def cleanNAICSdata():
     #found MI String in Data, so making Null
     df[df.TwoDigitNAICS=='MI']= NaN
 
-    print(df.TwoDigitNAICS.value_counts(dropna=False))
+    #print(df.TwoDigitNAICS.value_counts(dropna=False))
 
     #Turn to Categorical
     df.TwoDigitNAICS= df.TwoDigitNAICS.astype('category')
@@ -50,7 +50,7 @@ def cleanNAICSdata():
     # print('\n')
     # print(df.head())
 
-
+    return df
 
 def cleanSqFtdata():
     return pd.read_csv('data/myCurrInternshipData/squareFootageFeat.csv', index_col=0)
@@ -58,27 +58,29 @@ def cleanSqFtdata():
 def cleanWebDomainFeat():
     df = pd.read_csv('data/myCurrInternshipData/webDomainFeat.csv', index_col=0)
 
-    print(df.WebsiteTLD.value_counts(dropna=False))
+   # print(df.WebsiteTLD.value_counts(dropna=False))
 
     # found NONE String in Index, so adding it to NaN count and removing
     df[df.WebsiteTLD == 'NONE'] = NaN
 
-    print(df.WebsiteTLD.value_counts(dropna=False))
+    #print(df.WebsiteTLD.value_counts(dropna=False))
 
     #fix com and COM
     df[df.WebsiteTLD == 'com'] = 'COM'
-    print(df.WebsiteTLD.value_counts(dropna=False))
+    #print(df.WebsiteTLD.value_counts(dropna=False))
 
     # Turn to Categorical
     df.TwoDigitNAICS = df.WebsiteTLD.astype('category')
-    print('\n')
-    df.info()
+    # print('\n')
+    # df.info()
 
     # Do one Hot encoding Later
 
     # df= oneHotEncoding(df)
     # print('\n')
     # print(df.head())
+
+    return df
 
 def cleanFormD():
 
@@ -88,9 +90,9 @@ def cleanFormD():
 
     df= pd.concat([df1, df2], axis=0)
 
-    print(df.head())
-    print("\n")
-    print(df.info())
+    # print(df.head())
+    # print("\n")
+    # print(df.info())
 
     ### This wasn't 100% needed but may help
     # discreteColName= '60 months Form D #'
@@ -103,7 +105,21 @@ def cleanRest():
     return  pd.read_csv('data/myCurrInternshipData/allFeatsNoCategorical.csv', index_col=0)
 
 def concateAllData():
-    df
+    dfList=[]
+    df1= cleanRest()
+    df2= cleanNAICSdata()
+    df3 = cleanWebDomainFeat()
+    df4= cleanSqFtdata()
 
-cleanRest()
+    dfList.append(df1)
+    dfList.append(df2)
+    dfList.append(df3)
+    dfList.append(df1)
+    dfList.append(df4)
+
+    return concatDFHorizantaly(dfList)
+
+
+df=concateAllData()
+df.info()
 
