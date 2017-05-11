@@ -13,8 +13,8 @@ from classificationFunctions import performGaussianNB, performMultiNomNB, perfor
 from regressionFunctions import performRidgeReg, performLassoReg, performElasticReg
 from regressionFunctions import testFitvsNumParms, showLassoParamWeights, getNewXfromLassoWeightThresh
 
-from dataScienceFunctions import scatterMatrixPlot, correlation_matrix
-from dataScienceFunctions import outliers, printClassImbalance, skewness
+from EDAFuncs import scatterMatrixPlot, correlation_matrix
+from EDAFuncs import outliers, printClassImbalance, skewness
 
 from dataManipulationFuncs import oneHotEncoding, enocodeDiscreteDatWithinUnKnowns
 
