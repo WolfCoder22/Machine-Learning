@@ -15,7 +15,4 @@
 #### CSVs from ../data turned Pandas Df ready for ML in
 	- dataCleaning directory
 
-#### Hard coded Math (noAPI), ML functions using MATLAB in directory
-	- Hard Coded Math ML
-
 
