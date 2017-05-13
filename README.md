@@ -7,14 +7,14 @@
 #### Data Analysis and Munipulation Function Files
 	- EDAFuncs.py
 	- dataManipulationFuncs.py
-
-#### Practice using real Data
-	- realDataPractice.py
 	
 #### Notes on Different Models, testing/Traing Steps to Consider in
-	- notes directory
+	- notes
 
 #### CSVs from ../data turned Pandas Df ready for ML in
 	- dataCleaning directory
+
+#### Hard coded Math (noAPI), ML functions using MATLAB in directory
+	- Hard Coded Math ML
 
 
