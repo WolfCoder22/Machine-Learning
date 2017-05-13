@@ -1,4 +1,4 @@
-# ML model selection, training, testing, with notes
+# ML model selection, training, testing, EDA functions, notes, and more
 ### Sci-Kit Learn and Pandas Library used.
 
 #### Machine Learning Function Files 
