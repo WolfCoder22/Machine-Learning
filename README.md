@@ -1,4 +1,5 @@
-# TenfoldInterview
+# ML model selection, training, testing, with notes
+## Sci-Kit Learn and Pandas Library used.
 
 #### Machine Learning Function Files 
 	- classificationFunctions.py
