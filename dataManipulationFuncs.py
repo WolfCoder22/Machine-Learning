@@ -6,7 +6,7 @@ from dataCleaning.classificationData import getWineData
 from dataCleaning.regressionData import getSsinData, getEducationData, getBasicRegData
 
 """
-Functions to perform Data Manipulation
+Functions to perform Data Manipulation on Pandas Dataframes
 
 Methods:
     oneHotEncoding(df)
